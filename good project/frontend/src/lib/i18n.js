@@ -68,6 +68,39 @@ const resources = {
       'admin.reservations': 'Reservas',
       'admin.analytics': 'Análisis'
     }
+  },
+  fr: {
+    translation: {
+      'nav.home': 'Accueil',
+      'nav.menu': 'Menu',
+      'nav.cart': 'Panier',
+      'nav.orders': 'Commandes',
+      'nav.reservations': 'Réservations',
+      'nav.admin': 'Admin',
+      'nav.login': 'Connexion',
+      'nav.logout': 'Déconnexion',
+      'nav.register': 'S\'inscrire',
+      'home.title': 'Bienvenue chez Jr\'s Grill',
+      'home.subtitle': 'Découvrez une cuisine raffinée aux saveurs modernes',
+      'menu.title': 'Notre Menu',
+      'menu.filter': 'Filtres',
+      'menu.search': 'Rechercher...',
+      'menu.addToCart': 'Ajouter au Panier',
+      'cart.title': 'Panier d\'Achats',
+      'cart.empty': 'Votre panier est vide',
+      'cart.total': 'Total',
+      'cart.checkout': 'Commander',
+      'orders.title': 'Mes Commandes',
+      'orders.status': 'Statut',
+      'reservations.title': 'Mes Réservations',
+      'login.title': 'Connexion',
+      'register.title': 'S\'inscrire',
+      'admin.dashboard': 'Tableau de Bord',
+      'admin.menu': 'Gestion du Menu',
+      'admin.orders': 'Gestion des Commandes',
+      'admin.reservations': 'Réservations',
+      'admin.analytics': 'Analytiques'
+    }
   }
 };
 

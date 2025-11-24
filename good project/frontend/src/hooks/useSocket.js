@@ -50,7 +50,7 @@ export const useSocket = () => {
             addNotification({
                 type: 'order',
                 title: 'Order Update',
-                message: `Your order #${order.orderNumber} is now ${order.status}`,
+                message: `Your order #${order._id?.slice(-6)} is now ${order.status}`,
                 link: `/orders`,
                 data: order,
             });
@@ -65,7 +65,7 @@ export const useSocket = () => {
             addNotification({
                 type: 'order',
                 title: 'New Order',
-                message: `New order #${order.orderNumber} from ${order.user?.name}`,
+                message: `New order #${order._id?.slice(-6)} from ${order.user?.name || 'Admin User'}`,
                 link: `/admin/orders`,
                 data: order,
             });

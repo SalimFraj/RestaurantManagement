@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import NotificationCenter from './NotificationCenter';
 
 export default function Navbar() {
-  const { user, logout } = useAuth();
+  const { user, logout, loading } = useAuth();
   const items = useCartStore((state) => state.items);
   const { theme, toggleTheme } = useUIStore();
   const navigate = useNavigate();
@@ -138,9 +138,9 @@ export default function Navbar() {
               </div>
               <span className="ml-2 hidden sm:inline-block font-medium">{user.name}</span>
             </div>
-            <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow-xl border border-base-300 mt-2">
-              <li className="px-4 py-2 border-b border-base-300">
-                <span className="text-sm text-base-content/70">{user.email}</span>
+            <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-64 p-2 shadow-xl border border-base-300 mt-2">
+              <li className="">
+                <span className="text-sm text-base-content/70 truncate max-w-full block">{user.email}</span>
               </li>
               <li>
                 <button onClick={handleLogout} className="hover:bg-error/10 hover:text-error rounded-lg">
@@ -149,7 +149,7 @@ export default function Navbar() {
               </li>
             </ul>
           </div>
-        ) : (
+        ) : !loading ? (
           <>
             <Link to="/login" className="btn btn-ghost rounded-lg hover:bg-primary/10 transition-all">
               {t('nav.login')}
@@ -158,7 +158,7 @@ export default function Navbar() {
               {t('nav.register')}
             </Link>
           </>
-        )}
+        ) : null}
       </div>
     </div>
   );

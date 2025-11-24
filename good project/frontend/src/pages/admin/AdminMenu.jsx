@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../../services/api';
 import { createMenuItemWithImage, updateMenuItemWithImage } from '../../services/uploadHelper';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import ConfirmModal from '../../components/ConfirmModal';
 
 export default function AdminMenu() {
   const [menuItems, setMenuItems] = useState([]);
@@ -11,6 +13,7 @@ export default function AdminMenu() {
   const [editingItem, setEditingItem] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, itemId: null, itemName: '' });
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -130,12 +133,19 @@ export default function AdminMenu() {
     }
     setImageFile(null);
     setShowForm(true);
+    // Scroll to form after a brief delay to ensure it's rendered
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this item?')) return;
+  const handleDelete = (item) => {
+    setDeleteModal({ isOpen: true, itemId: item._id, itemName: item.name });
+  };
+
+  const confirmDelete = async () => {
     try {
-      await api.delete(`/menu/${id}`);
+      await api.delete(`/menu/${deleteModal.itemId}`);
       toast.success('Menu item deleted');
       fetchMenuItems();
     } catch (error) {
@@ -149,6 +159,14 @@ export default function AdminMenu() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Back Navigation */}
+      <Link to="/admin" className="btn btn-ghost gap-2 mb-6 hover:bg-base-200">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+        </svg>
+
+      </Link>
+
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-4xl font-bold">{t('admin.menu')}</h1>
         <button onClick={() => {
@@ -389,7 +407,7 @@ export default function AdminMenu() {
                 <td>
                   <div className="flex gap-2">
                     <button onClick={() => handleEdit(item)} className="btn btn-sm btn-primary">Edit</button>
-                    <button onClick={() => handleDelete(item._id)} className="btn btn-sm btn-error">Delete</button>
+                    <button onClick={() => handleDelete(item)} className="btn btn-sm btn-error">Delete</button>
                   </div>
                 </td>
               </tr>
@@ -397,6 +415,18 @@ export default function AdminMenu() {
           </tbody>
         </table>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={deleteModal.isOpen}
+        onClose={() => setDeleteModal({ isOpen: false, itemId: null, itemName: '' })}
+        onConfirm={confirmDelete}
+        title="Delete Menu Item"
+        message={`Are you sure you want to delete "${deleteModal.itemName}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        icon="🗑️"
+      />
     </div>
   );
 }

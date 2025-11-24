@@ -83,14 +83,19 @@ export const updateReservationStatus = async (req, res, next) => {
       req.params.id,
       { status },
       { new: true, runValidators: true }
-    ).populate('user', 'name email');
+    );
 
     if (!reservation) {
       return res.status(404).json({ message: 'Reservation not found' });
     }
 
-    // Notify user
-    emitReservationUpdate(reservation.user._id, reservation);
+    // Manually populate to handle deleted user reference
+    await reservation.populate('user', 'name email').catch(() => { });
+
+    // Notify user only if user reference still exists
+    if (reservation.user && reservation.user._id) {
+      emitReservationUpdate(reservation.user._id, reservation);
+    }
 
     res.json({ success: true, data: reservation });
   } catch (error) {

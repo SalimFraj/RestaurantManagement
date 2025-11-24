@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
@@ -22,7 +23,7 @@ export default function AdminAnalytics() {
   const fetchAnalytics = async () => {
     try {
       setLoading(true);
-      
+
       // Revenue stats
       const revenueRes = await api.get(`/analytics/revenue?period=${period}`);
       setStats(revenueRes.data.data);
@@ -50,7 +51,7 @@ export default function AdminAnalytics() {
       const response = await api.get('/analytics/export-csv', {
         responseType: 'blob'
       });
-      
+
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
@@ -58,7 +59,7 @@ export default function AdminAnalytics() {
       document.body.appendChild(link);
       link.click();
       link.remove();
-      
+
       toast.success('CSV exported successfully');
     } catch (error) {
       toast.error('Failed to export CSV');
@@ -71,6 +72,13 @@ export default function AdminAnalytics() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Back Navigation */}
+      <Link to="/admin" className="btn btn-ghost gap-2 mb-6 hover:bg-base-200">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+        </svg>
+      </Link>
+
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-4xl font-bold">{t('admin.analytics')}</h1>
         <div className="flex gap-4">
@@ -151,6 +159,7 @@ export default function AdminAnalytics() {
               ))}
             </Pie>
             <Tooltip />
+            <Legend />
           </PieChart>
         </ResponsiveContainer>
       </div>

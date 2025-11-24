@@ -71,10 +71,12 @@ export default function Menu() {
     if (dietaryFilters.length > 0) {
       filtered = filtered.filter(item => {
         return dietaryFilters.every(filter => {
-          if (filter === 'vegan') return item.isVegan;
-          if (filter === 'vegetarian') return item.isVegetarian;
-          if (filter === 'glutenFree') return item.isGlutenFree;
-          if (filter === 'spicy') return item.isSpicy;
+          // Check if item.dietary exists and has the property
+          if (!item.dietary) return false;
+          if (filter === 'vegan') return item.dietary.vegan;
+          if (filter === 'vegetarian') return item.dietary.vegetarian;
+          if (filter === 'glutenFree') return item.dietary.glutenFree;
+          if (filter === 'spicy') return item.dietary.spicy;
           return true;
         });
       });
@@ -357,16 +359,16 @@ export default function Menu() {
                           {isFavorite(item._id) ? '❤️' : '🤍'}
                         </button>
                       </figure>
-                      <div className="card-body">
-                        <h2 className="card-title">
-                          {item.name}
-                          {item.isSpicy && <span className="badge badge-error">🌶️</span>}
-                        </h2>
-                        <p className="text-base-content/70 text-sm line-clamp-2">{item.description}</p>
-                        <div className="flex flex-wrap gap-1 my-2">
-                          {item.isVegan && <span className="badge badge-success badge-sm">🌱 Vegan</span>}
-                          {item.isVegetarian && <span className="badge badge-info badge-sm">🥗 Veg</span>}
-                          {item.isGlutenFree && <span className="badge badge-warning badge-sm">🌾 GF</span>}
+                      <div className="card-body flex flex-col justify-between min-h-[220px]">
+                        <div>
+                          <h2 className="card-title mb-2">{item.name}</h2>
+                          <p className="text-base-content/70 text-sm line-clamp-2 mb-3">{item.description}</p>
+                          <div className="flex flex-wrap gap-1">
+                            {item.dietary?.vegan && <span className="badge badge-success badge-sm">🌱 Vegan</span>}
+                            {item.dietary?.vegetarian && <span className="badge badge-info badge-sm">🥗 Veg</span>}
+                            {item.dietary?.glutenFree && <span className="badge badge-warning badge-sm">🌾 GF</span>}
+                            {item.dietary?.spicy && <span className="badge badge-error badge-sm">🌶️ Spicy</span>}
+                          </div>
                         </div>
                         <div className="card-actions justify-between items-center mt-4">
                           <span className="text-2xl font-bold text-primary">${item.price}</span>
@@ -392,15 +394,13 @@ export default function Menu() {
                       </figure>
                       <div className="card-body flex-row justify-between">
                         <div className="flex-1">
-                          <h2 className="card-title">
-                            {item.name}
-                            {item.isSpicy && <span className="badge badge-error">🌶️</span>}
-                          </h2>
-                          <p className="text-base-content/70">{item.description}</p>
-                          <div className="flex flex-wrap gap-1 mt-2">
-                            {item.isVegan && <span className="badge badge-success badge-sm">🌱 Vegan</span>}
-                            {item.isVegetarian && <span className="badge badge-info badge-sm">🥗 Vegetarian</span>}
-                            {item.isGlutenFree && <span className="badge badge-warning badge-sm">🌾 Gluten-Free</span>}
+                          <h2 className="card-title mb-2">{item.name}</h2>
+                          <p className="text-base-content/70 mb-2">{item.description}</p>
+                          <div className="flex flex-wrap gap-1">
+                            {item.dietary?.vegan && <span className="badge badge-success badge-sm">🌱 Vegan</span>}
+                            {item.dietary?.vegetarian && <span className="badge badge-info badge-sm">🥗 Vegetarian</span>}
+                            {item.dietary?.glutenFree && <span className="badge badge-warning badge-sm">🌾 Gluten-Free</span>}
+                            {item.dietary?.spicy && <span className="badge badge-error badge-sm">🌶️ Spicy</span>}
                           </div>
                         </div>
                         <div className="flex flex-col justify-between items-end">

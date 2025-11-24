@@ -60,7 +60,7 @@ router.get('/order-status', authenticate, adminOnly, async (req, res, next) => {
     ]);
 
     const data = statusCounts.map(item => ({
-      status: item._id,
+      name: item._id,  // Recharts PieChart uses 'name' for labels
       count: item.count
     }));
 

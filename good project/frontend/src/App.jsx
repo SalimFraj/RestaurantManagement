@@ -88,7 +88,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
-        <div className="min-h-screen bg-base-200">
+        <div className="min-h-screen bg-base-200 overflow-x-hidden">
           <Navbar />
           <AnimatedRoutes />
           <Chatbot />

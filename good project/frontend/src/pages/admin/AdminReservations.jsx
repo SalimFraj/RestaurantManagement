@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
@@ -55,6 +56,13 @@ export default function AdminReservations() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Back Navigation */}
+      <Link to="/admin" className="btn btn-ghost gap-2 mb-6 hover:bg-base-200">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+        </svg>
+      </Link>
+
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-4xl font-bold">{t('admin.reservations')}</h1>
         <div className="flex gap-4">

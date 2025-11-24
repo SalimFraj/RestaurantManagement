@@ -107,15 +107,20 @@ export const updateOrderStatus = async (req, res, next) => {
       req.params.id,
       { status: req.body.status },
       { new: true, runValidators: true }
-    ).populate('user', 'name email')
-      .populate('items.menuItem', 'name image');
+    );
 
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
 
-    // Notify user
-    emitOrderUpdate(order.user._id, order);
+    // Manually populate to handle deleted references
+    await order.populate('user', 'name email').catch(() => { });
+    await order.populate('items.menuItem', 'name image').catch(() => { });
+
+    // Notify user only if user reference still exists
+    if (order.user && order.user._id) {
+      emitOrderUpdate(order.user._id, order);
+    }
 
     res.json({ success: true, data: order });
   } catch (error) {
