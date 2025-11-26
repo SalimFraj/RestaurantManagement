@@ -4,7 +4,14 @@ import { emitNewOrder, emitOrderUpdate } from '../services/socketService.js';
 
 export const createOrder = async (req, res, next) => {
   try {
-    const { items, deliveryAddress, phone, specialInstructions } = req.body;
+    const { items, deliveryAddress, phone, specialInstructions, orderType = 'delivery' } = req.body;
+
+    // Validate delivery address for delivery orders
+    if (orderType === 'delivery' && !deliveryAddress) {
+      return res.status(400).json({
+        message: 'Delivery address is required for delivery orders'
+      });
+    }
 
     let totalAmount = 0;
     const orderItems = [];
@@ -36,7 +43,8 @@ export const createOrder = async (req, res, next) => {
       user: req.user._id,
       items: orderItems,
       totalAmount,
-      deliveryAddress,
+      orderType,
+      deliveryAddress: orderType === 'delivery' ? deliveryAddress : undefined,
       phone,
       specialInstructions
     });

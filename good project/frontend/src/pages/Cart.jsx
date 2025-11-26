@@ -11,6 +11,7 @@ export default function Cart() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { items, updateQuantity, removeItem, clearCart, getTotal, getItemCount } = useCartStore();
+  const [orderType, setOrderType] = useState('delivery');
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [phone, setPhone] = useState('');
   const [specialInstructions, setSpecialInstructions] = useState('');
@@ -45,7 +46,7 @@ export default function Cart() {
     }
 
     // Custom validation
-    if (!deliveryAddress || deliveryAddress.trim() === '') {
+    if (orderType === 'delivery' && (!deliveryAddress || deliveryAddress.trim() === '')) {
       toast.error('Please enter your delivery address');
       return;
     }
@@ -69,7 +70,8 @@ export default function Cart() {
         quantity: item.quantity,
         price: item.price,
       })),
-      deliveryAddress,
+      orderType,
+      deliveryAddress: orderType === 'delivery' ? deliveryAddress : undefined,
       phone,
       specialInstructions,
     };
@@ -195,18 +197,56 @@ export default function Cart() {
                 <h2 className="card-title mb-4">Order Summary</h2>
 
                 <form onSubmit={handleCheckout} noValidate>
+                  {/* Order Type Selection */}
                   <div className="form-control mb-4">
                     <label className="label">
-                      <span className="label-text font-semibold">Delivery Address *</span>
+                      <span className="label-text font-semibold">Order Type *</span>
                     </label>
-                    <textarea
-                      className="textarea textarea-bordered"
-                      placeholder="Enter your delivery address"
-                      value={deliveryAddress}
-                      onChange={(e) => setDeliveryAddress(e.target.value)}
-                      rows={3}
-                    />
+                    <div className="flex gap-4">
+                      <label className="label cursor-pointer flex-1 bg-base-200 rounded-lg p-3 border-2 border-transparent hover:border-primary transition-colors">
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="radio"
+                            name="orderType"
+                            className="radio radio-primary"
+                            value="delivery"
+                            checked={orderType === 'delivery'}
+                            onChange={(e) => setOrderType(e.target.value)}
+                          />
+                          <span className="label-text font-medium">🚗 Delivery</span>
+                        </div>
+                      </label>
+                      <label className="label cursor-pointer flex-1 bg-base-200 rounded-lg p-3 border-2 border-transparent hover:border-primary transition-colors">
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="radio"
+                            name="orderType"
+                            className="radio radio-primary"
+                            value="pickup"
+                            checked={orderType === 'pickup'}
+                            onChange={(e) => setOrderType(e.target.value)}
+                          />
+                          <span className="label-text font-medium">🏃 Pickup</span>
+                        </div>
+                      </label>
+                    </div>
                   </div>
+
+                  {/* Delivery Address - Only shown for delivery orders */}
+                  {orderType === 'delivery' && (
+                    <div className="form-control mb-4">
+                      <label className="label">
+                        <span className="label-text font-semibold">Delivery Address *</span>
+                      </label>
+                      <textarea
+                        className="textarea textarea-bordered"
+                        placeholder="Enter your delivery address"
+                        value={deliveryAddress}
+                        onChange={(e) => setDeliveryAddress(e.target.value)}
+                        rows={3}
+                      />
+                    </div>
+                  )}
 
                   <div className="form-control mb-4">
                     <label className="label">

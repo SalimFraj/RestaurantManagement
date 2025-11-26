@@ -65,8 +65,8 @@ export default function Orders() {
       ) : (
         <div className="space-y-6">
           {orders.map((order, idx) => (
-            <div 
-              key={order._id} 
+            <div
+              key={order._id}
               className="card bg-base-100 shadow-xl card-hover animate-scale-in"
               style={{ animationDelay: `${idx * 0.1}s` }}
             >
@@ -88,8 +88,13 @@ export default function Orders() {
                       </div>
                     </div>
                   </div>
-                  <div className={`badge ${getStatusColor(order.status)} badge-lg shadow-lg capitalize`}>
-                    {order.status}
+                  <div className="flex items-center gap-2">
+                    <div className={`badge ${getStatusColor(order.status)} badge-lg shadow-lg capitalize`}>
+                      {order.status}
+                    </div>
+                    <div className="badge badge-outline badge-lg">
+                      {order.orderType === 'pickup' ? '🏃 Pickup' : '🚗 Delivery'}
+                    </div>
                   </div>
                 </div>
 
@@ -113,16 +118,28 @@ export default function Orders() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-base-200 rounded-lg">
-                  <div className="flex items-start gap-3">
-                    <svg className="w-5 h-5 text-primary mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <div>
-                      <p className="text-xs text-base-content/50 mb-1">Delivery Address</p>
-                      <p className="text-sm font-medium">{order.deliveryAddress}</p>
+                  {order.orderType === 'delivery' ? (
+                    <div className="flex items-start gap-3">
+                      <svg className="w-5 h-5 text-primary mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      <div>
+                        <p className="text-xs text-base-content/50 mb-1">Delivery Address</p>
+                        <p className="text-sm font-medium">{order.deliveryAddress}</p>
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="flex items-start gap-3">
+                      <svg className="w-5 h-5 text-primary mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                      </svg>
+                      <div>
+                        <p className="text-xs text-base-content/50 mb-1">Pickup Order</p>
+                        <p className="text-sm font-medium">Collect from restaurant</p>
+                      </div>
+                    </div>
+                  )}
                   <div className="flex items-start gap-3">
                     <svg className="w-5 h-5 text-primary mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />

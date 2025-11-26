@@ -3,7 +3,9 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import { AnimatePresence } from 'framer-motion';
+import { useEffect } from 'react';
 import { useAuth } from './context/AuthContext';
+import { useUIStore } from './store';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Menu from './pages/Menu';
@@ -85,6 +87,13 @@ function AnimatedRoutes() {
 }
 
 function App() {
+  const initTheme = useUIStore((state) => state.initTheme);
+
+  // Initialize theme on app mount
+  useEffect(() => {
+    initTheme();
+  }, [initTheme]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <Router>

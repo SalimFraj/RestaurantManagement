@@ -38,10 +38,18 @@ const orderSchema = new mongoose.Schema({
     enum: ['pending', 'preparing', 'ready', 'delivered', 'cancelled'],
     default: 'pending'
   },
+  orderType: {
+    type: String,
+    enum: ['delivery', 'pickup'],
+    default: 'delivery',
+    required: true
+  },
   deliveryAddress: {
     type: String,
-    required: true,
-    trim: true
+    trim: true,
+    required: function () {
+      return this.orderType === 'delivery';
+    }
   },
   phone: {
     type: String,

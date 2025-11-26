@@ -85,7 +85,7 @@ export const useCartStore = create(
 export const useUIStore = create(
     persist(
         (set, get) => ({
-            theme: 'dark', // Default to dark
+            theme: 'dark', // Default to dark theme
             menuView: 'grid', // 'grid' or 'list'
 
             setTheme: (theme) => {
@@ -102,7 +102,8 @@ export const useUIStore = create(
 
             // Initialize theme on load
             initTheme: () => {
-                const theme = get().theme;
+                const theme = get().theme || 'dark'; // Ensure fallback to dark
+                set({ theme });
                 document.documentElement.setAttribute('data-theme', theme);
             }
         }),

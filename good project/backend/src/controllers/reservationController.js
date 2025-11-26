@@ -3,7 +3,7 @@ import { emitNewReservation, emitReservationUpdate } from '../services/socketSer
 
 export const createReservation = async (req, res, next) => {
   try {
-    const { date, time, guests, specialRequests, contactPhone, contactEmail } = req.body;
+    const { date, time, guests, specialRequests, contactPhone, contactEmail, eventType = 'regular', eventDetails } = req.body;
 
     // Check for duplicate reservation (same user, date, and time)
     const existingReservation = await Reservation.findOne({
@@ -24,6 +24,8 @@ export const createReservation = async (req, res, next) => {
       date: new Date(date),
       time,
       guests,
+      eventType,
+      eventDetails,
       specialRequests,
       contactPhone,
       contactEmail

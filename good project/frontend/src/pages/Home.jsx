@@ -35,10 +35,15 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section with Steak Diner Theme */}
+      {/* Hero Section with Steakhouse Image */}
       <div className="hero min-h-screen relative overflow-hidden">
-        {/* Warm brown/red gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-amber-900 via-red-900 to-stone-900"></div>
+        {/* Hero Background Image from public folder */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: 'url(/steakhouse-hero.png)' }}
+        ></div>
+        {/* Dark overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/50"></div>
         <div className="absolute inset-0 bg-[url(data:image/svg+xml,%3Csvg%20width=%2260%22%20height=%2260%22%20viewBox=%220%200%2060%2060%22%20xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg%20fill=%22none%22%20fill-rule=%22evenodd%22%3E%3Cg%20fill=%22%23ffffff%22%20fill-opacity=%220.03%22%3E%3Cpath%20d=%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E)] opacity-10"></div>
 
         <div className="hero-content text-center text-neutral-content relative z-10 px-4">
@@ -126,7 +131,7 @@ export default function Home() {
       </div>
 
       {/* Stats Section */}
-      <div className="bg-gradient-to-b from-stone-100 to-stone-50 dark:from-stone-900 dark:to-stone-800 py-16">
+      <div className="bg-base-200 py-16">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
@@ -140,10 +145,17 @@ export default function Home() {
               >
                 <div className="text-4xl mb-2">{stat.icon}</div>
                 <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-red-600 to-amber-700 bg-clip-text text-transparent mb-2">{stat.value}</div>
-                <div className="text-stone-600 dark:text-stone-400 font-medium">{stat.label}</div>
+                <div className="text-base-content/70 font-medium">{stat.label}</div>
               </motion.div>
             ))}
           </div>
+        </div>
+      </div>
+
+      {/* Divider */}
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-xs mx-auto">
+          <div className="h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent rounded-full"></div>
         </div>
       </div>
 

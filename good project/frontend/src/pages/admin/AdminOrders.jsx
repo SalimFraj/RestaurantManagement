@@ -91,8 +91,13 @@ export default function AdminOrders() {
                     <strong>Customer:</strong> {order.user?.name || 'N/A'} ({order.user?.email || 'N/A'})
                   </p>
                 </div>
-                <div className={`badge ${getStatusColor(order.status)} badge-lg`}>
-                  {order.status}
+                <div className="flex items-center gap-2">
+                  <div className={`badge ${getStatusColor(order.status)} badge-lg`}>
+                    {order.status}
+                  </div>
+                  <div className="badge badge-outline badge-lg">
+                    {order.orderType === 'pickup' ? '🏃 Pickup' : '🚗 Delivery'}
+                  </div>
                 </div>
               </div>
 
@@ -113,8 +118,17 @@ export default function AdminOrders() {
               </div>
 
               <div className="mb-4">
-                <p className="text-sm"><strong>Delivery Address:</strong> {order.deliveryAddress}</p>
-                <p className="text-sm"><strong>Phone:</strong> {order.phone}</p>
+                {order.orderType === 'delivery' ? (
+                  <>
+                    <p className="text-sm"><strong>Delivery Address:</strong> {order.deliveryAddress}</p>
+                    <p className="text-sm"><strong>Phone:</strong> {order.phone}</p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-sm"><strong>Pickup Order</strong> - Customer will collect from restaurant</p>
+                    <p className="text-sm"><strong>Phone:</strong> {order.phone}</p>
+                  </>
+                )}
                 {order.specialInstructions && (
                   <p className="text-sm"><strong>Special Instructions:</strong> {order.specialInstructions}</p>
                 )}

@@ -20,6 +20,15 @@ const reservationSchema = new mongoose.Schema({
     min: 1,
     max: 20
   },
+  eventType: {
+    type: String,
+    enum: ['regular', 'birthday', 'corporate', 'anniversary', 'other'],
+    default: 'regular'
+  },
+  eventDetails: {
+    type: String,
+    trim: true
+  },
   specialRequests: {
     type: String,
     trim: true

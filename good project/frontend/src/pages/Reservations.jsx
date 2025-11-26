@@ -14,7 +14,9 @@ export default function Reservations() {
     guests: 1,
     specialRequests: '',
     contactPhone: '',
-    contactEmail: ''
+    contactEmail: '',
+    eventType: 'regular',
+    eventDetails: ''
   });
   const { user } = useAuth();
   const { t } = useTranslation();
@@ -52,7 +54,9 @@ export default function Reservations() {
         guests: 1,
         specialRequests: '',
         contactPhone: '',
-        contactEmail: user?.email || ''
+        contactEmail: user?.email || '',
+        eventType: 'regular',
+        eventDetails: ''
       });
       fetchReservations();
     } catch (error) {
@@ -87,8 +91,8 @@ export default function Reservations() {
           <h1 className="text-5xl font-extrabold mb-2 gradient-text">{t('reservations.title')}</h1>
           <p className="text-lg text-base-content/70">Book and manage your table reservations</p>
         </div>
-        <button 
-          onClick={() => setShowForm(!showForm)} 
+        <button
+          onClick={() => setShowForm(!showForm)}
           className="btn btn-primary btn-lg shadow-xl hover:scale-105 transition-transform"
         >
           {showForm ? (
@@ -217,6 +221,54 @@ export default function Reservations() {
 
                 <div className="form-control md:col-span-2">
                   <label className="label">
+                    <span className="label-text font-semibold">Event Type *</span>
+                  </label>
+                  <div className="relative">
+                    <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                    </svg>
+                    <select
+                      className="select select-bordered w-full pl-10 rounded-lg focus:select-primary"
+                      value={formData.eventType}
+                      onChange={(e) => setFormData({ ...formData, eventType: e.target.value })}
+                    >
+                      <option value="regular">🍽️ Regular Table</option>
+                      <option value="birthday">🎂 Birthday Party</option>
+                      <option value="corporate">💼 Corporate Event</option>
+                      <option value="anniversary">💐 Anniversary</option>
+                      <option value="other">✨ Other Special Event</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Event Details - Only shown for non-regular events */}
+                {formData.eventType !== 'regular' && (
+                  <div className="form-control md:col-span-2">
+                    <label className="label">
+                      <span className="label-text font-semibold">
+                        {formData.eventType === 'other' ? 'Describe Your Event *' : 'Event Details'}
+                      </span>
+                    </label>
+                    <textarea
+                      className="textarea textarea-bordered rounded-lg focus:textarea-primary"
+                      value={formData.eventDetails}
+                      onChange={(e) => setFormData({ ...formData, eventDetails: e.target.value })}
+                      placeholder={
+                        formData.eventType === 'other'
+                          ? 'Please describe your special event...'
+                          : formData.eventType === 'birthday'
+                            ? 'E.g., Birthday cake needed, decorations, number of guests...'
+                            : formData.eventType === 'corporate'
+                              ? 'E.g., Presentation setup, AV requirements, menu preferences...'
+                              : 'Any special requirements or details for this event...'
+                      }
+                      rows={3}
+                    />
+                  </div>
+                )}
+
+                <div className="form-control md:col-span-2">
+                  <label className="label">
                     <span className="label-text font-semibold">Special Requests</span>
                   </label>
                   <textarea
@@ -230,8 +282,8 @@ export default function Reservations() {
               </div>
 
               <div className="card-actions justify-end mt-6">
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   className="btn btn-primary btn-lg px-8 rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all"
                 >
                   <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -251,8 +303,8 @@ export default function Reservations() {
           <h2 className="text-3xl font-bold mb-4">No reservations yet</h2>
           <p className="text-xl text-base-content/70 mb-8">Book your table and enjoy a great dining experience!</p>
           {!showForm && (
-            <button 
-              onClick={() => setShowForm(true)} 
+            <button
+              onClick={() => setShowForm(true)}
               className="btn btn-primary btn-lg px-8 shadow-xl hover:scale-105 transition-transform"
             >
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -265,8 +317,8 @@ export default function Reservations() {
       ) : (
         <div className="space-y-6">
           {reservations.map((reservation, idx) => (
-            <div 
-              key={reservation._id} 
+            <div
+              key={reservation._id}
               className="card bg-base-100 shadow-xl card-hover animate-scale-in"
               style={{ animationDelay: `${idx * 0.1}s` }}
             >
@@ -278,11 +330,11 @@ export default function Reservations() {
                     </div>
                     <div>
                       <h2 className="card-title text-2xl mb-2">
-                        {new Date(reservation.date).toLocaleDateString('en-US', { 
-                          weekday: 'long', 
-                          year: 'numeric', 
-                          month: 'long', 
-                          day: 'numeric' 
+                        {new Date(reservation.date).toLocaleDateString('en-US', {
+                          weekday: 'long',
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
                         })}
                       </h2>
                       <div className="flex items-center gap-4 text-base-content/70">
@@ -301,8 +353,18 @@ export default function Reservations() {
                       </div>
                     </div>
                   </div>
-                  <div className={`badge ${getStatusColor(reservation.status)} badge-lg shadow-lg capitalize`}>
-                    {reservation.status}
+                  <div className="flex flex-col items-end gap-2">
+                    <div className={`badge ${getStatusColor(reservation.status)} badge-lg shadow-lg capitalize`}>
+                      {reservation.status}
+                    </div>
+                    {reservation.eventType && reservation.eventType !== 'regular' && (
+                      <div className="badge badge-secondary badge-lg">
+                        {reservation.eventType === 'birthday' && '🎂 Birthday'}
+                        {reservation.eventType === 'corporate' && '💼 Corporate'}
+                        {reservation.eventType === 'anniversary' && '💐 Anniversary'}
+                        {reservation.eventType === 'other' && '✨ Special Event'}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -335,6 +397,17 @@ export default function Reservations() {
                       <div>
                         <p className="text-xs text-base-content/50 mb-1">Special Requests</p>
                         <p className="text-sm font-medium">{reservation.specialRequests}</p>
+                      </div>
+                    </div>
+                  )}
+                  {reservation.eventDetails && (
+                    <div className="md:col-span-2 flex items-start gap-3">
+                      <svg className="w-5 h-5 text-secondary mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                      </svg>
+                      <div>
+                        <p className="text-xs text-base-content/50 mb-1">Event Details</p>
+                        <p className="text-sm font-medium">{reservation.eventDetails}</p>
                       </div>
                     </div>
                   )}

@@ -103,13 +103,26 @@ export default function AdminReservations() {
                     <strong>Customer:</strong> {reservation.user?.name || 'N/A'} ({reservation.user?.email || reservation.contactEmail})
                   </p>
                 </div>
-                <div className={`badge ${getStatusColor(reservation.status)} badge-lg`}>
-                  {reservation.status}
+                <div className="flex flex-col gap-2 items-end">
+                  <div className={`badge ${getStatusColor(reservation.status)} badge-lg`}>
+                    {reservation.status}
+                  </div>
+                  {reservation.eventType && reservation.eventType !== 'regular' && (
+                    <div className="badge badge-secondary badge-lg">
+                      {reservation.eventType === 'birthday' && '🎂 Birthday'}
+                      {reservation.eventType === 'corporate' && '💼 Corporate'}
+                      {reservation.eventType === 'anniversary' && '💐 Anniversary'}
+                      {reservation.eventType === 'other' && '✨ Special Event'}
+                    </div>
+                  )}
                 </div>
               </div>
 
               <div className="mb-4">
                 <p className="text-sm"><strong>Contact:</strong> {reservation.contactPhone} | {reservation.contactEmail}</p>
+                {reservation.eventDetails && (
+                  <p className="text-sm mt-2 bg-secondary/10 p-2 rounded"><strong>Event Details:</strong> {reservation.eventDetails}</p>
+                )}
                 {reservation.specialRequests && (
                   <p className="text-sm mt-2"><strong>Special Requests:</strong> {reservation.specialRequests}</p>
                 )}
