@@ -5,6 +5,12 @@ import { useCartStore } from '../store';
 
 const AuthContext = createContext();
 
+/**
+ * Hook to access authentication context.
+ * Must be used within an AuthProvider component.
+ * 
+ * @returns {Object} Authentication context with user, loading, login, register, logout, checkAuth
+ */
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -23,7 +29,11 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, []);
 
-  // Sync cart with user changes
+  /**
+   * Synchronize cart with authentication state.
+   * When user logs in, associate cart with their account.
+   * When user logs out, clear the cart to prevent data leakage.
+   */
   useEffect(() => {
     if (user) {
       setCartUser(user._id);
@@ -43,6 +53,14 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  /**
+   * Authenticates a user with email and password.
+   * On success, updates the user state and cart association.
+   * 
+   * @param {string} email - User's email
+   * @param {string} password - User's password
+   * @returns {Promise<Object>} Result with success boolean and optional message
+   */
   const login = async (email, password) => {
     try {
       const response = await api.post('/auth/login', { email, password });
@@ -62,6 +80,13 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  /**
+   * Registers a new user account.
+   * Automatically logs in the user upon successful registration.
+   * 
+   * @param {Object} userData - User registration data (name, email, password, etc.)
+   * @returns {Promise<Object>} Result with success boolean and optional message
+   */
   const register = async (userData) => {
     try {
       const response = await api.post('/auth/register', userData);
@@ -81,6 +106,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  /**
+   * Logs out the current user and clears their session.
+   * Clears user state and cart data.
+   */
   const logout = async () => {
     try {
       await api.post('/auth/logout');

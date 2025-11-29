@@ -2,6 +2,11 @@ import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 
+/**
+ * AI-powered chatbot component using Groq's streaming API.
+ * Provides menu recommendations, answers customer questions, and assists with reservations.
+ * Features real-time streaming responses for a more natural conversation experience.
+ */
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
@@ -72,7 +77,7 @@ export default function Chatbot() {
                 });
               }
             } catch (e) {
-              // Ignore parse errors
+              // Silently ignore malformed chunks - SSE streams may have incomplete JSON fragments
             }
           }
         }
@@ -145,8 +150,8 @@ export default function Chatbot() {
             style={{ animationDelay: `${idx * 0.05}s` }}
           >
             <div className={`max-w-[80%] rounded-2xl p-3 shadow-lg ${msg.role === 'user'
-                ? 'bg-primary text-primary-content rounded-br-sm'
-                : 'bg-base-200 text-base-content rounded-bl-sm'
+              ? 'bg-primary text-primary-content rounded-br-sm'
+              : 'bg-base-200 text-base-content rounded-bl-sm'
               }`}>
               <p className="text-sm whitespace-pre-wrap break-words">{msg.content}</p>
             </div>

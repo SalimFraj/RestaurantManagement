@@ -24,7 +24,8 @@ export const createMenuItemFormData = (menuData, imageFile = null) => {
         formData.append('dietary[spicy]', menuData.dietary.spicy);
     }
 
-    // Add ingredients array
+    // Append ingredients as an array using bracket notation
+    // This allows the backend to properly parse them as an array rather than individual fields
     if (menuData.ingredients && Array.isArray(menuData.ingredients)) {
         menuData.ingredients.forEach((ingredient, index) => {
             formData.append(`ingredients[${index}]`, ingredient);

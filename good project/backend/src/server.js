@@ -71,7 +71,11 @@ setupSocketIO(io);
 // Make io accessible to routes
 app.set('io', io);
 
-// Security Middleware
+/**
+ * Security headers with Helmet.
+ * CSP allows images from any HTTPS source for Cloudinary compatibility.
+ * Cross-origin embedder policy is disabled to allow third-party resources.
+ */
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -84,7 +88,10 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false,
 }));
 
-// Compression
+/**
+ * Compress response bodies to reduce bandwidth usage.
+ * Particularly beneficial for JSON API responses and static assets.
+ */
 app.use(compression());
 
 // CORS
@@ -107,7 +114,10 @@ if (process.env.NODE_ENV === 'production') {
   app.use(morgan('dev'));
 }
 
-// Request ID middleware for tracking
+/**
+ * Attach unique request IDs for distributed tracing and debugging.
+ * Useful for correlating logs across multiple services and requests.
+ */
 app.use((req, res, next) => {
   req.id = Date.now().toString(36) + Math.random().toString(36).substr(2);
   res.setHeader('X-Request-ID', req.id);
@@ -206,7 +216,10 @@ const gracefulShutdown = async (signal) => {
   }, 10000);
 };
 
-// Start server
+/**
+ * Initializes database connection and starts the HTTP server.
+ * Database connection is established before accepting requests to ensure app is ready.
+ */
 const startServer = async () => {
   await connectDB();
 
@@ -226,13 +239,19 @@ process.on('unhandledRejection', (err) => {
   }
 });
 
-// Handle uncaught exceptions
+/**
+ * Gracefully shut down on uncaught exceptions to prevent undefined state.
+ * In production, terminates immediately; in dev, allows for debugging.
+ */
 process.on('uncaughtException', (err) => {
   logger.error('❌ Uncaught Exception:', err);
   gracefulShutdown('UNCAUGHT_EXCEPTION');
 });
 
-// Handle termination signals
+/**
+ * Handle graceful shutdown on termination signals (SIGTERM/SIGINT).
+ * Allows in-flight requests to complete before closing connections.
+ */
 process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 

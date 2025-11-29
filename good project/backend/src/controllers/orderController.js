@@ -2,6 +2,11 @@ import Order from '../models/Order.js';
 import MenuItem from '../models/MenuItem.js';
 import { emitNewOrder, emitOrderUpdate } from '../services/socketService.js';
 
+/**
+ * Creates a new order with validation and real-time notifications.
+ * Validates item availability, calculates totals, updates item popularity metrics,
+ * and notifies admins via WebSocket for immediate order processing.
+ */
 export const createOrder = async (req, res, next) => {
   try {
     const { items, deliveryAddress, phone, specialInstructions, orderType = 'delivery' } = req.body;
@@ -34,7 +39,7 @@ export const createOrder = async (req, res, next) => {
         name: item.name
       });
 
-      // Update popularity
+      // Track popularity for recommendation algorithms - increments each time item is ordered
       menuItem.popularity += item.quantity;
       await menuItem.save();
     }
@@ -50,9 +55,9 @@ export const createOrder = async (req, res, next) => {
     });
 
     await order.populate('items.menuItem', 'name image');
-    await order.populate('user', 'name email'); // Populate user for notification
+    await order.populate('user', 'name email');
 
-    // Notify admins
+    // Send real-time notification to all connected admins for immediate order handling
     emitNewOrder(order);
 
     res.status(201).json({ success: true, data: order });
@@ -61,6 +66,10 @@ export const createOrder = async (req, res, next) => {
   }
 };
 
+/**
+ * Retrieves all orders for the authenticated user.
+ * Orders are sorted by creation date (newest first) for better UX.
+ */
 export const getMyOrders = async (req, res, next) => {
   try {
     const orders = await Order.find({ user: req.user._id })
@@ -73,6 +82,10 @@ export const getMyOrders = async (req, res, next) => {
   }
 };
 
+/**
+ * Retrieves all orders in the system (admin only).
+ * Supports optional filtering by order status for order management workflows.
+ */
 export const getAllOrders = async (req, res, next) => {
   try {
     const { status } = req.query;
@@ -89,6 +102,10 @@ export const getAllOrders = async (req, res, next) => {
   }
 };
 
+/**
+ * Retrieves a single order by ID with authorization checks.
+ * Users can only view their own orders; admins can view any order.
+ */
 export const getOrder = async (req, res, next) => {
   try {
     const order = await Order.findById(req.params.id)
@@ -109,6 +126,11 @@ export const getOrder = async (req, res, next) => {
   }
 };
 
+/**
+ * Updates an order's status (admin only) and notifies the customer.
+ * Handles edge cases where user or menu items may have been deleted since order creation.
+ * Sends real-time WebSocket notification to the customer about status changes.
+ */
 export const updateOrderStatus = async (req, res, next) => {
   try {
     const order = await Order.findByIdAndUpdate(
@@ -121,11 +143,11 @@ export const updateOrderStatus = async (req, res, next) => {
       return res.status(404).json({ message: 'Order not found' });
     }
 
-    // Manually populate to handle deleted references
+    // Gracefully handle deleted users or menu items - don't fail if references are gone
     await order.populate('user', 'name email').catch(() => { });
     await order.populate('items.menuItem', 'name image').catch(() => { });
 
-    // Notify user only if user reference still exists
+    // Send real-time update to customer if their account still exists
     if (order.user && order.user._id) {
       emitOrderUpdate(order.user._id, order);
     }
